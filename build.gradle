@@ -1,0 +1,75 @@
+plugins {
+    id 'java'
+    id 'maven'
+    id 'maven-publish'
+    id 'com.jfrog.bintray' version '1.8.0'
+}
+
+group = 'jibril'
+version = '1.0'
+
+// Minified Splash
+({ String l, String v ->
+    def d = "$l ${(v.size() + l.size() + 1) % 2 != 0 ? "-" : "--"} v$v"
+    def w = (0..(30 - d.size() / 2)).collect { it % 2 != 0 ? '-' : '=' }.join ''
+    println "|$w| $d |${w.reverse()}|"
+})("Jibril Dice-Notation Library", version)
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+javadoc {
+    failOnError = false
+    options.memberLevel = JavadocMemberLevel.PUBLIC
+    options.author()
+    options.encoding = 'UTF-8'
+    options.addStringOption('-html5')
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+publishing {
+    publications {
+        BintrayRelease(MavenPublication) {
+            from components.java
+            groupId group
+            artifactId project.name
+            version project.version
+            artifact javadocJar
+            artifact sourcesJar
+        }
+    }
+}
+
+bintray {
+    user = bintrayUsername
+    key = bintrayApiKey
+    publications = ['BintrayRelease']
+    pkg {
+        repo = 'maven'
+        name = project.name
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/jibrilbot/dice-notation.git'
+        publish = true
+        version {
+            name = project.version
+        }
+    }
+}
+
+bintrayUpload {
+    dependsOn build
+    dependsOn 'publishBintrayReleasePublicationToMavenLocal'
+}
