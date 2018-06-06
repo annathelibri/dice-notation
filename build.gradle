@@ -5,7 +5,7 @@ plugins {
     id 'com.jfrog.bintray' version '1.8.0'
 }
 
-group = 'jibril'
+group = 'pw.aru.discord'
 version = '1.0'
 
 // Minified Splash
@@ -13,7 +13,7 @@ version = '1.0'
     def d = "$l ${(v.size() + l.size() + 1) % 2 != 0 ? "-" : "--"} v$v"
     def w = (0..(30 - d.size() / 2)).collect { it % 2 != 0 ? '-' : '=' }.join ''
     println "|$w| $d |${w.reverse()}|"
-})("Jibril Dice-Notation Library", version)
+})("Aru Dice-Notation Library", version)
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -61,7 +61,7 @@ bintray {
         repo = 'maven'
         name = project.name
         licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/jibrilbot/dice-notation.git'
+        vcsUrl = 'https://github.com/arubot/dice-notation.git'
         publish = true
         version {
             name = project.version
