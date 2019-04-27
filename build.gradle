@@ -2,29 +2,21 @@ plugins {
     id 'java'
     id 'maven'
     id 'maven-publish'
-    id 'com.jfrog.bintray' version '1.8.0'
+    id 'com.jfrog.bintray' version '1.8.4'
 }
 
-group = 'pw.aru.discord'
-version = '1.0'
-
-// Minified Splash
-({ String l, String v ->
-    def d = "$l ${(v.size() + l.size() + 1) % 2 != 0 ? "-" : "--"} v$v"
-    def w = (0..(30 - d.size() / 2)).collect { it % 2 != 0 ? '-' : '=' }.join ''
-    println "|$w| $d |${w.reverse()}|"
-})("Aru Dice-Notation Library", version)
+group = 'pw.aru.libs'
+version = '1.1'
 
 sourceCompatibility = 1.8
-targetCompatibility = 1.8
 
 task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
+    archiveClassifier = 'sources'
     from sourceSets.main.allSource
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
+    archiveClassifier = 'javadoc'
     from javadoc.destinationDir
 }
 
@@ -60,8 +52,9 @@ bintray {
     pkg {
         repo = 'maven'
         name = project.name
+        userOrg = 'arudiscord'
         licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/arubot/dice-notation.git'
+        vcsUrl = 'https://github.com/arudiscord/dice-notation.git'
         publish = true
         version {
             name = project.version
@@ -71,5 +64,5 @@ bintray {
 
 bintrayUpload {
     dependsOn build
-    dependsOn 'publishBintrayReleasePublicationToMavenLocal'
+    dependsOn publishToMavenLocal
 }
