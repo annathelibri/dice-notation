@@ -22,7 +22,8 @@ import pw.aru.libs.dicenotation.lexer.Token;
 import pw.aru.libs.dicenotation.lexer.TokenType;
 
 public class DiceParser extends Parser {
-    public static boolean OPTIMIZE_BINARY_OPERATIONS = false;
+    public boolean optimizeBinaryOperations = false;
+    public boolean optimizeUnaryOperations = false;
 
     public DiceParser(DiceLexer tokens) {
         super(tokens, DefaultGrammar.INSTANCE);

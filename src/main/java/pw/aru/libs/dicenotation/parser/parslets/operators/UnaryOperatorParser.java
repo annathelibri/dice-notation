@@ -18,6 +18,8 @@ package pw.aru.libs.dicenotation.parser.parslets.operators;
 import pw.aru.libs.dicenotation.ast.Expr;
 import pw.aru.libs.dicenotation.ast.operations.UnaryOperation;
 import pw.aru.libs.dicenotation.ast.operations.UnaryOperatorType;
+import pw.aru.libs.dicenotation.ast.value.DecimalNode;
+import pw.aru.libs.dicenotation.ast.value.IntNode;
 import pw.aru.libs.dicenotation.lexer.Token;
 import pw.aru.libs.dicenotation.parser.DiceParser;
 import pw.aru.libs.dicenotation.parser.Precedence;
@@ -33,6 +35,34 @@ public class UnaryOperatorParser implements PrefixParser {
     @Override
     public Expr parse(DiceParser parser, Token token) {
         Expr left = parser.parseExpr(Precedence.PREFIX);
+
+        if (parser.optimizeUnaryOperations && (left instanceof IntNode || left instanceof DecimalNode)) {
+            return optimizeArithmetic(token, left, operator);
+        }
+
         return new UnaryOperation(token.getPosition(), left, operator);
+    }
+
+    private Expr optimizeArithmetic(Token token, Expr left, UnaryOperatorType operator) {
+        switch (operator) {
+            case PLUS: {
+                if (left instanceof IntNode) {
+                    return new IntNode(token.getPosition(), ((IntNode) left).getValue());
+                } else {
+                    return new DecimalNode(token.getPosition(), ((DecimalNode) left).getValue());
+                }
+            }
+            case MINUS: {
+                if (left instanceof IntNode) {
+                    return new IntNode(token.getPosition(), -((IntNode) left).getValue());
+                } else {
+                    return new DecimalNode(token.getPosition(), -((DecimalNode) left).getValue());
+                }
+            }
+
+            default: {
+                return new UnaryOperation(token.getPosition(), left, operator);
+            }
+        }
     }
 }

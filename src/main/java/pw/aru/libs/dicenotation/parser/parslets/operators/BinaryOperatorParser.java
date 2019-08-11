@@ -37,7 +37,7 @@ public class BinaryOperatorParser extends BinaryParser {
     public Expr parse(DiceParser parser, Expr left, Token token) {
         Expr right = parser.parseExpr(getPrecedence() - (isLeftAssoc() ? 0 : 1));
 
-        if (DiceParser.OPTIMIZE_BINARY_OPERATIONS
+        if (parser.optimizeBinaryOperations
             && (left instanceof IntNode || left instanceof DecimalNode)
             && (right instanceof IntNode || right instanceof DecimalNode)) {
             return optimizeArithmetic(parser, token, left, right, operator);
